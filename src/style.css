@@ -1,0 +1,16 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 100dvw;
+  min-height: 100dvh;
+  /* background-color: #333; */
+  background: url('/path_to_your_image.jpg') no-repeat center center/cover;
+}
+
+#glCanvas {
+  border: 1px solid #ccc;
+}
