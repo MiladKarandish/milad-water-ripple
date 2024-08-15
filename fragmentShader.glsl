@@ -6,8 +6,13 @@ out vec4 outColor;
 
 uniform sampler2D u_texture;
 uniform float u_time;
-uniform vec4 u_ripples[10]; // Each ripple has x, y, startTime, and duration
+uniform vec4 u_ripples[50]; // Each ripple has x, y, startTime, and duration
 uniform int u_numRipples;
+
+// Light parameters
+uniform vec3 u_lightPosition;
+uniform vec3 u_lightColor;
+uniform vec3 u_ambientColor;
 
 void main() {
   vec2 uv = v_texCoord;
@@ -32,8 +37,8 @@ void main() {
       float distance = length(uv - center);
 
       if(distance < radius) {
-                // Use smoothstep for softer edge transitions
-        float edgeSoftness = 0.05f;
+                // Increase edge softness for thicker edges
+        float edgeSoftness = 0.1f; // Increased edge softness
         float fade = smoothstep(radius - edgeSoftness, radius, distance);
 
         float waveFrequency = 5.0f;
@@ -47,5 +52,17 @@ void main() {
 
     // Apply distortion to uv coordinates
   vec4 distortedColor = texture(u_texture, uv + distortion);
-  outColor = mix(color, distortedColor, 1.0f); // Blend factor adjusted for stronger effect
+
+    // Calculate fake normal from distortion
+  vec3 normal = normalize(vec3(distortion * 10.0f, 1.0f)); // Amplify distortion for more visible effect
+
+    // Lighting calculations
+  vec3 lightDir = normalize(u_lightPosition - vec3(uv, 0.0f));
+  float diff = max(dot(normal, lightDir), 0.0f);
+
+  vec3 ambient = u_ambientColor;
+  vec3 diffuse = diff * u_lightColor;
+
+  vec3 finalColor = (ambient + diffuse) * distortedColor.rgb;
+  outColor = vec4(finalColor, 1.0f);
 }

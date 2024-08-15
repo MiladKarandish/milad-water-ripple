@@ -15,7 +15,7 @@ async function loadShaderSource(url: string): Promise<string> {
   return response.text();
 }
 
-// Shader compilation
+// Shader compilation error checking
 function compileShader(
   gl: WebGL2RenderingContext,
   type: GLenum,
@@ -38,7 +38,7 @@ function compileShader(
   return shader;
 }
 
-// Program linking
+// Program linking error checking
 function createProgram(
   gl: WebGL2RenderingContext,
   vertexShader: WebGLShader,
@@ -76,6 +76,22 @@ async function main() {
 
   const program = createProgram(gl, vertexShader, fragmentShader);
   gl.useProgram(program);
+
+  const lightPositionLocation = gl.getUniformLocation(
+    program,
+    'u_lightPosition'
+  );
+  const lightColorLocation = gl.getUniformLocation(program, 'u_lightColor');
+  const ambientColorLocation = gl.getUniformLocation(program, 'u_ambientColor');
+
+  // Set lighting parameters
+  const lightPosition = [0.5, 0.5, 1.0]; // Example light position
+  const lightColor = [1.0, 1.0, 1.0]; // White light
+  const ambientColor = [0.2, 0.2, 0.2]; // Low ambient light
+
+  gl.uniform3fv(lightPositionLocation, lightPosition);
+  gl.uniform3fv(lightColorLocation, lightColor);
+  gl.uniform3fv(ambientColorLocation, ambientColor);
 
   const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
   const timeUniformLocation = gl.getUniformLocation(program, 'u_time');
@@ -116,7 +132,7 @@ async function main() {
   };
 
   // Ripple data
-  const maxRipples = 10;
+  const maxRipples = 50;
   const ripples = new Float32Array(maxRipples * 4); // Each ripple has x, y, startTime, and duration
   let numRipples = 0;
 
@@ -139,7 +155,7 @@ async function main() {
       this.duration = duration;
     }
 
-    update(currentTime: number) {
+    update(_: number) {
       // No need to update properties; shader will use time-based calculations
     }
   }
