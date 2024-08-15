@@ -64,8 +64,8 @@ function createProgram(
 
 // Main function
 async function main() {
-  const vertexShaderSource = await loadShaderSource('vertexShader.glsl');
-  const fragmentShaderSource = await loadShaderSource('fragmentShader.glsl');
+  const vertexShaderSource = await loadShaderSource('/vertexShader.glsl');
+  const fragmentShaderSource = await loadShaderSource('/fragmentShader.glsl');
 
   const vertexShader = compileShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
   const fragmentShader = compileShader(
@@ -124,7 +124,7 @@ async function main() {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
 
   const image = new Image();
-  image.src = 'path_to_your_image.jpg'; // Replace with the path to your image
+  image.src = './path_to_your_image.jpg'; // Replace with the path to your image
   image.onload = () => {
     gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
